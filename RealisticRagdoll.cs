@@ -4,7 +4,12 @@ public class RealisticRagdoll : MonoBehaviour
 {
     // The list of rigidbodies in the ragdoll, automatically populated at runtime
     private Rigidbody[] ragdollRigidbodies;
+
+    //Flag that is used to register whether the ragdoll has come to a rest
     private bool atRest = true;
+
+    // Flag to enable the optional "GutBuster" function
+    private bool enableGutBuster = true;
 
     private void Awake()
     {
@@ -24,7 +29,6 @@ public class RealisticRagdoll : MonoBehaviour
             }
 
             // Check if the ragdoll has come to a rest
-
             foreach (Rigidbody rb in ragdollRigidbodies)
             {
                 if (rb.velocity.magnitude > 1.0f || rb.angularVelocity.magnitude > 1.0f)
@@ -50,6 +54,19 @@ public class RealisticRagdoll : MonoBehaviour
         {
             enabled = false;
             Destroy(this);
-        }  
+        }
+    }
+
+    // Function to simulate a punch to the stomach
+    public void GutBuster()
+    {
+        if (enableGutBuster)
+        {
+            // Find the middle spine rigidbody using the HumanBodyBones enum
+            Rigidbody spineRigidbody = GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Spine).GetComponent<Rigidbody>();
+
+            // Apply a backwards force to the spine rigidbody to simulate the punch
+            spineRigidbody.AddForce(-transform.forward * 500.0f, ForceMode.Impulse);
+        }
     }
 }
