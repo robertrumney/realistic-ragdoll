@@ -45,7 +45,7 @@ public class RealisticRagdoll : MonoBehaviour
     private void End()
     {
          enabled = false;
-         Destroy(this)'
+         Destroy(this);
     }
 
     // Function to simulate a punch to the stomach
