@@ -2,20 +2,28 @@ using UnityEngine;
 
 public class RealisticRagdoll : MonoBehaviour
 {
-    // The list of rigidbodies in the ragdoll, automatically populated at runtime
+    // Array to hold all of the rigidbodies in the ragdoll
     private Rigidbody[] ragdollRigidbodies;
-
-    // Flag to enable the optional "GutBuster" function
+    
+    // Flag to enable/disable the "GutBuster" function
     private bool enableGutBuster = true;
+    
+    // Time after which the script should be disabled and destroyed
+    private float endTime = 5;
+    
+    // Time when the script starts
+    private float startTime;
 
     private void Awake()
     {
-        // Populate the list of rigidbodies in the ragdoll
+        // Populate the ragdollRigidbodies array with all of the rigidbodies in the ragdoll
         ragdollRigidbodies = GetComponentsInChildren<Rigidbody>();
         
-        Invoke("End", 5);
+        // Save the start time of the script
+        startTime = Time.time;
         
-        if(enableGutBuster)
+        // If the "GutBuster" function is enabled, call it
+        if (enableGutBuster)
             GutBuster();
     }
 
@@ -23,38 +31,44 @@ public class RealisticRagdoll : MonoBehaviour
     {
         if (Time.timeScale > 0)
         {
-            // Apply downward force to each rigidbody in the ragdoll to make it fall realistically
-            foreach (Rigidbody rb in ragdollRigidbodies)
+            // Apply a downward force to each rigidbody in the ragdoll to make it fall realistically
+            for (int i = 0; i < ragdollRigidbodies.Length; i++)
             {
-                rb.AddForce(Vector3.down * 9.8f * rb.mass);
-            }
-
-            // Check if the ragdoll has come to a rest
-            foreach (Rigidbody rb in ragdollRigidbodies)
-            {
-                // If the ragdoll is at rest, disable and destroy this script
-                if (rb.velocity.magnitude < 1.0f && rb.angularVelocity.magnitude < 1.0f)
+                ragdollRigidbodies[i].AddForce(Vector3.down * 9.8f * ragdollRigidbodies[i].mass);
+                
+                // Check if the current rigidbody has come to a rest
+                if (ragdollRigidbodies[i].velocity.magnitude < 1.0f && ragdollRigidbodies[i].angularVelocity.magnitude < 1.0f)
                 {
-                   End();
+                    // End the script if one of the rigidbodies has come to a rest
+                    End();
                 }
+            }
+            //Check if the time passed is more than 5 seconds
+            if (Time.time - startTime > endTime)
+            {
+                // End the script if the time passed is more than 5 seconds
+                End();
             }
         }
     }
 
-    // If the ragdoll hasn't come to a rest after 5 seconds, disable and destroy this script
+    // Function to disable and destroy the script
     private void End()
     {
-         enabled = false;
-         Destroy(this);
+        enabled = false;
+        Destroy(this);
     }
 
     // Function to simulate a punch to the stomach
     public void GutBuster()
     {
+        // Variable to hold the force applied to the spine rigidbody
+        float force = 500.0f;
+
         // Find the middle spine rigidbody using the HumanBodyBones enum
         Rigidbody spineRigidbody = GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Spine).GetComponent<Rigidbody>();
 
-        // Apply a backwards force to the spine rigidbody to simulate the punch
-        spineRigidbody.AddForce(-transform.forward * 500.0f, ForceMode.Impulse);
+        // Apply the force to the spine rigidbody to simulate the punch
+        spineRigidbody.AddForce(-transform.forward * force, ForceMode.Impulse);
     }
 }
