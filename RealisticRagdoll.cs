@@ -5,7 +5,7 @@ public class RealisticRagdoll : MonoBehaviour
     // Array to hold all of the rigidbodies in the ragdoll
     private Rigidbody[] ragdollRigidbodies;
     
-    // Flag to enable/disable the "GutBuster" function
+    // Optional flag to enable/disable the "GutBuster" function if extra punch is needed
     private bool enableGutBuster = true;
     
     // Time after which the script should be disabled and destroyed
