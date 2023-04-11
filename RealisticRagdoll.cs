@@ -52,10 +52,9 @@ public class RealisticRagdoll : MonoBehaviour
         }
     }
 
-    // Function to disable and destroy the script
+    // Function to destroy the script
     private void End()
     {
-        enabled = false;
         Destroy(this);
     }
 
